@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Movie Search App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .search-box {
+      margin: 20px 0;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 70%;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #movieContainer {
+      margin-top: 20px;
+      background-color: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .movie-card {
+      text-align: left;
+    }
+
+    .movie-card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 Movie Search App</h1>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Enter movie name..." />
+      <button onclick="searchMovie()"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <div id="movieContainer"></div>
+  </div>
+
+  <script>
+    const apiKey = "https://www.omdbapi.com/?apikey=564727fa&t=";
+
+    function searchMovie() {
+      const searchInput = document.getElementById("searchInput").value;
+      const container = document.getElementById("movieContainer");
+      if (!searchInput) {
+        container.innerHTML = "<p>Please enter a movie name.</p>";
+        return;
+      }
+
+      fetch(apiKey + encodeURIComponent(searchInput))
+        .then(response => response.json())
+        .then(data => {
+          if (data.Response === "False") {
+            container.innerHTML = "<p>Movie not found. Try another title.</p>";
+          } else {
+            container.innerHTML = `
+              <div class="movie-card">
+                <img src="${data.Poster}" alt="Movie Poster" />
+                <h2>${data.Title}</h2>
+                <p><strong>Year:</strong> ${data.Year}</p>
+                <p><strong>Genre:</strong> ${data.Genre}</p>
+                <p><strong>Plot:</strong> ${data.Plot}</p>
+                <p><strong>IMDB Rating:</strong> ${data.imdbRating}</p>
+              </div>
+            `;
+          }
+        })
+        .catch(error => {
+          container.innerHTML = "<p>Error fetching movie data.</p>";
+          console.error(error);
+        });
+    }
+  </script>
+</body>
+</html>
